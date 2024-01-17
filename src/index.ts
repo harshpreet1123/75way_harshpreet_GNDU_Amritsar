@@ -20,7 +20,7 @@ try {
 } catch (error) {
     console.log(error);
 }
-cron.schedule('0 18 * * * *',sendCronMail,{timezone:'Asia/Kolkata'});
+cron.schedule('0 18 * * *',sendCronMail,{timezone:'Asia/Kolkata'});
 cron.schedule('* 30 * * * *',lowQuantityNotification,{timezone:'Asia/Kolkata'});
 
 app.use(fileUpload({ useTempFiles: true, tempFileDir: '/tmp/' }))
