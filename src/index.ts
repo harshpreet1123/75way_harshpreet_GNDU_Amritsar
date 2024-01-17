@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes';
 import fileUpload from 'express-fileupload';
 import cron from 'node-cron';
 import { sendCronMail } from './middleware/cronmail';
+import { lowQuantityNotification } from './middleware/lowQuantity';
 dotenv.config();
 const port = process.env.PORT;
 const dbUser = process.env.DB_USER;
@@ -20,6 +21,7 @@ try {
     console.log(error);
 }
 cron.schedule('0 18 * * * *',sendCronMail,{timezone:'Asia/Kolkata'});
+cron.schedule('* * 30 * * *',lowQuantityNotification,{timezone:'Asia/Kolkata'});
 
 app.use(fileUpload({ useTempFiles: true, tempFileDir: '/tmp/' }))
 app.use('/user', authRoutes);

@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import User from '../models/user';
 import Product from '../models/product';
 dotenv.config();
+const service = process.env.MAIL_SERVICE;
+const mail_user =process.env.MAIL_USER;
+const mail_pass= process.env.MAIL_PASS
 
 export const sendCronMail = async () => {
     try {
@@ -17,15 +20,15 @@ export const sendCronMail = async () => {
         </ul>`;
 
         var transporter = nodemailer.createTransport({
-            service: process.env.MAIL_SERVICE || 'gmail',
+            service: service,
             auth: {
-                user: process.env.MAIL_USER || 'harshpreet.75way@gmail.com',
-                pass: process.env.MAIL_PASS || 'ivnccezufcmbhjxu'
+                user: mail_user,
+                pass: mail_pass
             }
         });
 
         var mailOptions = {
-            from: process.env.MAIL_USER,
+            from: mail_user,
             to: ownerEmails,
             subject: 'Inventory info Mail',
             html: html
