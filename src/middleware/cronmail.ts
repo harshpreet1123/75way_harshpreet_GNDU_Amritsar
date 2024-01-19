@@ -1,47 +1,41 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import User from '../models/user';
 import Product from '../models/product';
+import {nodemailerConfig,transporter} from '../config/nodemailer';
+
 dotenv.config();
-const service = process.env.MAIL_SERVICE;
-const mail_user =process.env.MAIL_USER;
-const mail_pass= process.env.MAIL_PASS
 
 export const sendCronMail = async () => {
     try {
-
         const owners = await User.find({ role: 'owner' });
-        const ownerEmails = owners.map((owner) => owner.email);
-        const products = await Product.find();
 
-        const html = `<h1>Inventory Details</h1>
-        <ul>
-        ${products.map((product) => `<li>${product.name} : ${product.quantity}</li>`)}
-        </ul>`;
+        // Loop through each owner
+        for (const owner of owners) {
+            const ownerEmail = owner.email;
+            
+            const products = await Product.find({ owner_id: owner._id });
 
-        var transporter = nodemailer.createTransport({
-            service: service,
-            auth: {
-                user: mail_user,
-                pass: mail_pass
-            }
-        });
+            const html = `<h1>Inventory Details for ${owner.name}</h1>
+                <ul>
+                    ${products.map(product => `<li>${product.name} : ${product.quantity}</li>`)}
+                </ul>`;
 
-        var mailOptions = {
-            from: mail_user,
-            to: ownerEmails,
-            subject: 'Inventory info Mail',
-            html: html
-        };
+            var mailOptions = {
+                from: nodemailerConfig.mail_user,
+                to: ownerEmail,
+                subject: 'Inventory info Mail',
+                html: html
+            };
 
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+        }
     } catch (error) {
         console.log("Automatic email sending failed. Error: ", error);
     }
-}
+};

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
-import User, { IUser } from "../models/user";
+import User, { IUser } from "../../models/user";
 import { UploadedFile } from "express-fileupload";
-import cloudinary from "../config/cloudinary";
+import cloudinary from "../../config/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 
 export const register = async (req: Request, res: Response) => {
@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
             gender: req.body.gender,
             age: req.body.age,
             profileImg: result.secure_url,
-            role: req.body.role
+            role: req.body.role||'customer'
         });
         const savedUser = await user.save();
         console.log('User Saved:', savedUser);
